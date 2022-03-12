@@ -5,16 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import DisplayContext from "../context/DisplayMode";
 
-// export async function getStaticProps() {
-//   const resp = await axios.get("https://restcountries.com/v3.1/all");
+export async function getStaticProps() {
+  const resp = await axios.get("https://restcountries.com/v3.1/all");
 
-//   return {
-//     props: { data: resp.data },
-//   };
-// }
+  return {
+    props: { data: resp.data },
+  };
+}
 
-export default function Home() {
-  const [data, setData] = useState({ loading: false, list: [] });
+export default function Home({ data }) {
   const [searchInput, setSearchInput] = useState("");
   const [displayData, setDisplayData] = useState([]);
   const [filter, setFilter] = useState(false);
@@ -25,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     setRegion("");
-    const displayData = data.list.filter((item) =>
+    const displayData = data.filter((item) =>
       item.name.common.toLowerCase().includes(searchInput.toLowerCase())
     );
     setDisplayData(displayData);
@@ -34,28 +33,28 @@ export default function Home() {
   useEffect(() => {
     setSearchInput("");
     if (region !== "") {
-      let displayData = data.list.filter(
+      let displayData = data.filter(
         (item) => item.region.toLowerCase() === region
       );
       setDisplayData(displayData);
     }
   }, [region, data]);
 
-  useEffect(() => {
-    const getData = async () => {
-      const copyData = { ...data };
-      copyData.loading = true;
-      setData(copyData);
-      try {
-        const resp = await axios.get("https://restcountries.com/v3.1/all");
-        setData({ loading: false, list: [...resp.data] });
-      } catch (ex) {
-        copyData.loading = false;
-        setData(copyData);
-      }
-    };
-    getData();
-  }, [data]);
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     const copyData = { ...data };
+  //     copyData.loading = true;
+  //     setData(copyData);
+  //     try {
+  //       const resp = await axios.get("https://restcountries.com/v3.1/all");
+  //       setData({ loading: false, list: [...resp.data] });
+  //     } catch (ex) {
+  //       copyData.loading = false;
+  //       setData(copyData);
+  //     }
+  //   };
+  //   getData();
+  // }, [data]);
   return (
     <div>
       <main
@@ -63,11 +62,6 @@ export default function Home() {
           displayMode ? "w-5/6 mx-auto pt-10 text-white" : "w-5/6 mx-auto pt-10"
         }
       >
-        {data.loading && (
-          <h2 className="font-bold animate-pulse text-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            Loading Countries.....
-          </h2>
-        )}
         <div className="flex justify-between flex-wrap gap-y-2 relative">
           <div
             className={
